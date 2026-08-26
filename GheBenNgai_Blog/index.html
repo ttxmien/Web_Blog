@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghé Bên Ngài - Ngôi Nhà Bình An</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #FAF8F5;
+            --text-dark: #3A2E2B;
+            --primary-mint: #B5EAD7;
+            --primary-pink: #FFB7B2;
+            --primary-yellow: #FFDAC1;
+            --button-yellow: #FFCB28;
+            --border-thick: 3px solid #3A2E2B;
+            --radius-comic: 24px;
+            --shadow-comic: 6px 6px 0px #3A2E2B;
+            --shadow-comic-hover: 10px 10px 0px #3A2E2B;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        body { font-family: 'Quicksand', sans-serif; background-color: var(--bg-main); color: var(--text-dark); overflow-x: hidden; padding-top: 100px; }
+        h1, h2, h3, h4, .nav-logo { font-family: 'Fredoka', cursive; font-weight: 700; }
+
+        nav {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1200px;
+            background: #FFFFFF; border: var(--border-thick); border-radius: 50px; padding: 10px 25px;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-comic); z-index: 1000;
+        }
+        .nav-logo { font-size: 1.4rem; color: #D32F2F; text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; gap: 10px; list-style: none; }
+        .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 700; padding: 8px 14px; border-radius: 20px; font-size: 0.95rem; transition: all 0.2s ease; }
+        .nav-links a:hover, .nav-links a.active { background-color: var(--primary-mint); box-shadow: 3px 3px 0px var(--text-dark); border: 2px solid var(--text-dark); transform: translate(-2px, -2px); }
+
+        section { padding: 40px 20px; max-width: 1200px; margin: 0 auto; min-height: auto; display: flex; flex-direction: column; justify-content: center; }
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 35px; position: relative; align-self: center; color: var(--text-dark); }
+        .section-title::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 8px; background: var(--primary-pink); border-radius: 10px; z-index: -1; }
+
+        .btn-comic { display: inline-block; padding: 12px 25px; background-color: var(--button-yellow); color: var(--text-dark); font-weight: 700; font-size: 1rem; text-decoration: none; border-radius: 50px; border: var(--border-thick); box-shadow: var(--shadow-comic); transition: all 0.2s; cursor: pointer; }
+        .btn-comic:hover { transform: translate(-3px, -3px); box-shadow: var(--shadow-comic-hover); background-color: #FFB300; }
+
+        #home { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: center; padding-top: 10px; }
+        .hero-text h1 { font-size: 3rem; color: #D32F2F; line-height: 1.2; margin-bottom: 20px; text-shadow: 3px 3px 0px #FFCDD2; }
+        .hero-text p { font-size: 1.15rem; margin-bottom: 25px; font-weight: 500; line-height: 1.6; }
+        .hero-graphic { position: relative; text-align: center; }
+        .illustration-box { background: #FFFFFF; border: var(--border-thick); border-radius: var(--radius-comic); padding: 12px; box-shadow: var(--shadow-comic); display: inline-block; transform: rotate(2deg); animation: float-animation 4s ease-in-out infinite; }
+        .illustration-box img { max-width: 100%; height: auto; border-radius: 16px; display: block; }
+
+        .verse-gift-card { background: #FFFDF0; border: var(--border-thick); border-radius: var(--radius-comic); padding: 18px 20px; text-align: center; box-shadow: var(--shadow-comic); position: relative; max-width: 420px; margin: 0 auto; }
+        .verse-card-header { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .verse-card-header h3 { font-size: 1.15rem; color: #D32F2F; }
+        .floating-emoji { font-size: 1.6rem; display: inline-block; line-height: 1; animation: float-up-down 3s ease-in-out infinite; }
+        .gift-cartoon-container { position: relative; width: 100%; max-width: 130px; margin: 0 auto 10px; cursor: pointer; }
+        .gift-cartoon-svg { width: 100%; height: auto; display: block; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: drop-shadow(2px 2px 0px rgba(58, 46, 43, 0.12)); }
+        .gift-cartoon-container:hover .gift-cartoon-svg { transform: scale(1.08) rotate(-2deg); }
+        .verse-reveal-box { display: none; background: #FFFFFF; border: 2px dashed var(--text-dark); border-radius: 16px; padding: 12px 15px; font-size: 0.95rem; font-style: italic; color: #4A3728; line-height: 1.5; box-shadow: 3px 3px 0px var(--primary-yellow); }
+        .verse-reveal-box.active { display: block; animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .verse-reference { font-weight: 700; color: #D32F2F; font-style: normal; font-size: 0.88rem; margin-top: 5px; display: inline-block; }
+
+        .featured-article-container { background: #FFFFFF; border: var(--border-thick); border-radius: var(--radius-comic); padding: 30px; box-shadow: var(--shadow-comic); }
+        .featured-badge-admin { display: inline-flex; align-items: center; gap: 8px; background: var(--primary-pink); border: 2px solid var(--text-dark); padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; margin-bottom: 15px; }
+        .article-title-featured { font-size: 1.8rem; color: #D32F2F; line-height: 1.3; margin-bottom: 10px; }
+        .article-meta-info { display: flex; gap: 15px; font-size: 0.88rem; color: #666; margin-bottom: 20px; flex-wrap: wrap; }
+        .article-cover-featured { width: 100%; max-height: 380px; object-fit: cover; border-radius: 18px; border: 2px solid var(--text-dark); margin-bottom: 20px; }
+        .article-body { font-size: 1.05rem; line-height: 1.8; color: #333; }
+        .article-body p { margin-bottom: 16px; }
+        .article-body h3 { font-size: 1.3rem; color: #D32F2F; margin: 20px 0 10px; }
+        .biblical-quote-box { background: #F0F4C3; border-left: 5px solid #9E9D24; border-radius: 12px; padding: 15px 20px; font-style: italic; font-size: 1rem; margin: 20px 0; color: #33691E; }
+        .biblical-quote-box span { display: block; text-align: right; font-weight: 700; font-style: normal; margin-top: 6px; color: #2E7D32; }
+
+        .podcast-card { background: #FFFCEF; border: var(--border-thick); border-radius: var(--radius-comic); padding: 30px; box-shadow: var(--shadow-comic); display: grid; grid-template-columns: 220px 1fr; gap: 25px; align-items: center; }
+        .podcast-cover { width: 100%; height: 220px; object-fit: cover; border-radius: 18px; border: 2px solid var(--text-dark); box-shadow: 4px 4px 0px var(--text-dark); }
+        .podcast-player-box { background: #FFFFFF; border: 2px solid var(--text-dark); border-radius: 20px; padding: 20px; box-shadow: 4px 4px 0px var(--primary-mint); }
+        .audio-play-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--button-yellow); border: 2px solid var(--text-dark); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; flex-shrink: 0; transition: transform 0.2s; }
+        .audio-play-btn:hover { transform: scale(1.08); }
+        .audio-progress-bar { width: 100%; height: 10px; background: #E0E0E0; border-radius: 10px; overflow: hidden; border: 1px solid var(--text-dark); cursor: pointer; margin-top: 10px; }
+        .audio-progress-fill { height: 100%; width: 0%; background: #4CAF50; transition: width 0.1s linear; }
+
+        .category-filters { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 30px; }
+        .filter-btn { background: #FFFFFF; border: 2px solid var(--text-dark); padding: 8px 18px; border-radius: 20px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .filter-btn.active, .filter-btn:hover { background: var(--primary-mint); box-shadow: 3px 3px 0px var(--text-dark); transform: translate(-2px, -2px); }
+
+        .blog-container { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; }
+        .blog-post { background: #FFFFFF; border: var(--border-thick); border-radius: var(--radius-comic); overflow: hidden; box-shadow: var(--shadow-comic); display: flex; flex-direction: column; transition: all 0.3s ease; }
+        .blog-post:hover { transform: translateY(-4px); box-shadow: var(--shadow-comic-hover); }
+        .blog-img { height: 160px; background-size: cover; background-position: center; border-bottom: var(--border-thick); position: relative; }
+        .blog-tag { position: absolute; top: 10px; left: 10px; background: var(--primary-pink); padding: 4px 12px; border-radius: 20px; border: 2px solid var(--text-dark); font-weight: 700; font-size: 0.8rem; }
+        .blog-content { padding: 18px; display: flex; flex-direction: column; flex-grow: 1; }
+        .blog-content h3 { font-size: 1.15rem; margin-bottom: 10px; line-height: 1.3; }
+        .blog-content p { color: #666; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px; flex-grow: 1; }
+
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 25px; }
+        .page-btn { background: #FFFFFF; border: 2px solid var(--text-dark); padding: 6px 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .page-btn.active, .page-btn:hover { background: var(--button-yellow); box-shadow: 2px 2px 0px var(--text-dark); }
+
+        .sidebar { display: flex; flex-direction: column; gap: 20px; }
+        .widget { background: #FFFFFF; border: var(--border-thick); border-radius: var(--radius-comic); padding: 20px; box-shadow: var(--shadow-comic); }
+        .widget h4 { font-size: 1.15rem; margin-bottom: 12px; border-bottom: 3px dashed var(--primary-mint); padding-bottom: 6px; }
+        .search-box input { width: 100%; border: 2px solid var(--text-dark); border-radius: 12px; padding: 10px 14px; font-family: inherit; outline: none; background: #FFFCEF; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: #FFFFFF; border: var(--border-thick); border-radius: var(--radius-comic); max-width: 750px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 30px; box-shadow: 10px 10px 0px #000; position: relative; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 1.8rem; cursor: pointer; color: var(--text-dark); background: var(--primary-pink); border: 2px solid var(--text-dark); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 1; }
+
+        .contact-box { background: #FFFFFF; border: var(--border-thick); border-radius: var(--radius-comic); padding: 30px; box-shadow: var(--shadow-comic); }
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .form-group input { border: var(--border-thick); padding: 12px 20px; border-radius: 15px; font-family: inherit; font-size: 1rem; background: #FFFCEF; outline: none; }
+        .ql-toolbar.ql-snow { border: var(--border-thick) !important; border-top-left-radius: 15px; border-top-right-radius: 15px; background: #FFFDAC; }
+        .ql-container.ql-snow { border: var(--border-thick) !important; border-top: none !important; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; background: #FFFCEF; font-family: 'Quicksand', sans-serif; font-size: 1rem; min-height: 180px; }
+
+        .music-player { position: fixed; bottom: 25px; right: 25px; background: #FFFFFF; border: var(--border-thick); border-radius: 50px; padding: 8px 18px; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-comic); z-index: 999; }
+        .music-btn { background: var(--button-yellow); border: 2px solid var(--text-dark); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        footer { background: #3A2E2B; color: #FFFFFF; padding: 40px 20px 20px; margin-top: 50px; border-top: 5px solid var(--button-yellow); }
+        .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 40px; margin-bottom: 25px; }
+        .footer-col h4 { color: var(--button-yellow); margin-bottom: 12px; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 8px; }
+        .footer-col ul li a { color: #FFF; text-decoration: none; }
+        .footer-bottom { border-top: 1px solid #55433F; padding-top: 18px; text-align: center; font-size: 0.85rem; color: #AAA; }
+
+        @keyframes pop-in { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes float-up-down { 0% { transform: translateY(0px); } 50% { transform: translateY(-6px); } 100% { transform: translateY(0px); } }
+        @keyframes float-animation { 0% { transform: translateY(0px) rotate(2deg); } 50% { transform: translateY(-10px) rotate(0deg); } 100% { transform: translateY(0px) rotate(2deg); } }
+
+        @media (max-width: 900px) {
+            body { padding-top: 80px; }
+            #home { grid-template-columns: 1fr; text-align: center; }
+            .blog-container { grid-template-columns: 1fr; }
+            .podcast-card { grid-template-columns: 1fr; text-align: center; }
+            .podcast-cover { height: 200px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            nav { width: 95%; padding: 10px 15px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#home" class="nav-logo">⛪ 🌱 Ghé Bên Ngài!</a>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">Trang Chủ</a></li>
+            <li><a href="#tam-tinh">Tâm Tình Từ Tụi Mình</a></li>
+            <li><a href="#audio-podcast">Audio/Podcast</a></li>
+            <li><a href="#blog">Nhật Ký Bình Yên</a></li>
+            <li><a href="#confess">Gửi Tâm Tình</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <div class="hero-text">
+            <h1>Cứ đến với Ngài nhẹ nhàng như vậy thôi!</h1>
+            <p>Bạn ơi, nếu hôm nay ngoài kia có nhiều áp lực quá, hay đôi vai bạn đang trĩu nặng vì những lo toan, thì ghé lại đây một chút với tụi mình nhen. Trút bỏ hết những mệt mỏi lại phía sau cửa và lắng nghe tiếng Chúa thì thầm. Ngài chẳng đòi hỏi bạn phải hoàn hảo đâu, chỉ cần bạn bước đến với một trái tim mộc mạc nhất. Chúa thương bạn vô điều kiện! 💕</p>
+            <a href="#tam-tinh" class="btn-comic">Tâm Tình Từ Tụi Mình 🚀</a>
+        </div>
+        <div class="hero-graphic">
+            <div class="illustration-box">
+                <img src="https://fmavtn.org/image/post_images/2319/1770168805.jpg" alt="Chúa Giê-xu hoạt hình" width="340">
+            </div>
+        </div>
+    </section>
+
+    <section id="daily-verse" style="padding: 15px 20px;">
+        <div class="verse-gift-card">
+            <div class="verse-card-header">
+                <span class="floating-emoji">🎁</span>
+                <h3>Hộp quà LỜI CHÚA hôm nay</h3>
+            </div>
+            
+            <div class="gift-cartoon-container" onclick="openCartoonGift()" title="Nhấp vào đây để mở quà">
+                <svg class="gift-cartoon-svg" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 60 90 Q 60 75 80 75 L 220 75 Q 240 75 240 90 L 240 280 Q 240 295 225 295 L 75 295 Q 60 295 60 280 Z" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M 60 115 L 240 115" stroke="#3A2E2B" stroke-width="5"/>
+                    <path d="M 150 75 C 100 20 70 60 140 75 C 190 60 200 20 150 75 Z" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="6" stroke-linejoin="round"/>
+                    <circle cx="150" cy="75" r="14" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="6"/>
+                    <path d="M 140 85 Q 110 120 100 135 M 160 85 Q 190 120 200 135" stroke="#3A2E2B" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M 120 115 L 120 295 M 180 115 L 180 295" stroke="#3A2E2B" stroke-width="4"/>
+                    <circle cx="115" cy="180" r="8" fill="#3A2E2B"/>
+                    <circle cx="175" cy="180" r="8" fill="#3A2E2B"/>
+                    <path d="M 130 205 Q 145 225 160 205" stroke="#3A2E2B" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <path d="M 240 130 L 350 130 L 350 280 L 240 280 Z" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="5" stroke-linejoin="round"/>
+                    <path d="M 235 150 L 355 150" stroke="#3A2E2B" stroke-width="5"/>
+                    <path d="M 295 130 C 260 90 240 120 290 130 C 330 120 330 90 295 130 Z" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="5"/>
+                    <circle cx="295" cy="130" r="9" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="5"/>
+                    <path d="M 295 150 L 295 280" stroke="#3A2E2B" stroke-width="4"/>
+                    <path d="M 160 200 L 240 200 L 240 295 L 160 295 Z" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="5" stroke-linejoin="round"/>
+                    <path d="M 155 218 L 245 218" stroke="#3A2E2B" stroke-width="5"/>
+                    <path d="M 200 200 C 170 170 150 190 195 200 C 230 190 220 170 200 200 Z" fill="#FFFFFF" stroke="#3A2E2B" stroke-width="4"/>
+                    <path d="M 200 218 L 200 295" stroke="#3A2E2B" stroke-width="4"/>
+                    <circle cx="185" cy="255" r="4.5" fill="#3A2E2B"/>
+                    <circle cx="215" cy="255" r="4.5" fill="#3A2E2B"/>
+                    <path d="M 193 268 Q 200 276 207 268" stroke="#3A2E2B" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="verse-reveal-box" id="verse-reveal-box">
+                <div id="verse-text-content"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tam-tinh">
+        <h2 class="section-title">Tâm Tình Từ Tụi Mình 🌱</h2>
+        <div class="featured-article-container">
+            <div class="featured-badge-admin">
+                <i class="fa-solid fa-crown" style="color: #FFB300;"></i> Bài viết đặc biệt
+            </div>
+            <h2 class="article-title-featured">Người Thợ Gốm Vẫn Luôn Kiên Nhẫn Với Bạn 🏺✨</h2>
+            <div class="article-meta-info">
+                <span><i class="fa-solid fa-user-pen"></i> Tác giả: <strong>Admin</strong></span>
+                <span><i class="fa-solid fa-calendar-days"></i> 31/08/2026</span>
+            </div>
+            <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1000&q=80" alt="Người thợ gốm kiên nhẫn" class="article-cover-featured">
+            <div class="article-body">
+                <p class="lead-text" style="font-size: 1.15rem; font-weight: 600; color: #4A3728;">
+                    Đôi khi chúng ta lỡ tay làm tổn thương chính mình và người khác, cảm thấy bản thân như một chiếc bình gốm nứt nẻ, bị ném vào góc tối và chỉ đáng bỏ đi. Nhưng bạn biết không? Chúa là Thợ Gốm, Ngài nhặt những mảnh vỡ đó, kiên nhẫn gắn lại và biến bạn thành một tác phẩm nghệ thuật tuyệt đẹp theo cách nhẹ nhàng nhất...
+                </p>
+                <h3>1. Những Vết Nứt Không Làm Bạn Mất Đi Giá Trị</h3>
+                <p>
+                    Trong cuộc sống, có những lúc chúng ta phạm sai lầm, bị tổn thương hoặc tự dằn dặt vì những thất bại của bản thân. Thế giới ngoài kia có thể đánh giá bạn qua những vết sẹo, nhưng người Thợ Gốm Thiên Đàng thì khác. Ngài nhìn thấy trọn vẹn vẻ đẹp bên trong ngay cả khi bạn đang là những mảnh vỡ.
+                </p>
+                <div class="biblical-quote-box">
+                    "Đức Giê-hô-va phán: Hỡi nhà Y-sơ-ra-ên, Ta không thể đối xử với ngươi như người thợ gốm nầy hay sao? Hỡi nhà Y-sơ-ra-ên, đất sét trong tay thợ gốm thể nào, thì các ngươi ở trong tay Ta cũng thể ấy."
+                    <span>- Giê-rê-mi 18:6</span>
+                </div>
+                <h3>2. Sự Kiên Nhẫn Nhẹ Nhàng Của Chúa</h3>
+                <p>
+                    Ngài không đập bỏ chiếc bình nứt một cách giận dữ. Bàn tay Ngài nhẹ nhàng nhào nặn lại từng chút một, dùng tình yêu thương và sự tha thứ để hàn gắn những rạn nứt. Những vết sẹo trong quá khứ của bạn không phải là dấu hiệu của sự thất bại, mà là minh chứng cho tình yêu tha thứ và quyền năng biến đổi của Ngài.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="audio-podcast">
+        <h2 class="section-title">Góc Audio & Podcast 🎧</h2>
+        <div class="podcast-card">
+            <img src="https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=600&q=80" alt="Podcast Bình Yên" class="podcast-cover">
+            <div>
+                <span class="blog-tag" style="position:static; display:inline-block; margin-bottom:12px;">Tập Mới Nhất</span>
+                <h3 style="font-size: 1.6rem; color:#D32F2F; margin-bottom: 8px;">Tập 01: Lắng Nghe Tiếng Nói Khi Lòng Xôn Xao</h3>
+                <p style="color: #555; margin-bottom: 20px; font-size: 0.98rem; line-height: 1.6;">
+                    Có những ngày, tiếng ồn ngoài kia vội vã đến mức làm xáo trộn cả những khoảng lặng sâu nhất trong lòng. Nếu bờ vai bạn đang thấm mệt và đôi chân muốn dừng lại nghỉ ngơi, hãy dành cho mình vài phút tĩnh lặng. Đeo tai nghe, hít một hơi thật sâu, chầm chậm thả rơi mọi âu lo và lắng nghe giai điệu dịu dàng của sự bình an...
+                </p>
+                
+                <div class="podcast-player-box">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <button class="audio-play-btn" id="post-audio-btn" onclick="togglePostAudio()">
+                            <i class="fa-solid fa-play" id="post-audio-icon"></i>
+                        </button>
+                        <div style="flex-grow:1;">
+                            <span style="font-weight:700; font-size:0.95rem;">Podcast: Khi Lòng Xôn Xao</span>
+                            <div class="audio-progress-bar" id="post-audio-progress-container" onclick="seekPostAudio(event)">
+                                <div class="audio-progress-fill" id="post-audio-progress"></div>
+                            </div>
+                        </div>
+                        <span style="font-size: 0.85rem; font-weight: 700; color: #555;" id="post-audio-time">00:00</span>
+                    </div>
+                </div>
+                <audio id="post-audio-element" src="./post-audio-sample.mp3"></audio>
+            </div>
+        </div>
+    </section>
+
+    <section id="blog">
+        <h2 class="section-title">Nhật Ký Bình Yên 📖</h2>
+        
+        <div class="category-filters">
+            <button class="filter-btn active" onclick="filterPosts('all', this)">Tất Cả</button>
+            <button class="filter-btn" onclick="filterPosts('Sự Bình An', this)">Sự Bình An 🕊️</button>
+            <button class="filter-btn" onclick="filterPosts('Hy Vọng', this)">Hy Vọng 🌱</button>
+            <button class="filter-btn" onclick="filterPosts('Tình Yêu', this)">Tình Yêu 💕</button>
+        </div>
+
+        <div class="blog-container">
+            <div class="blog-main-area">
+                <div class="blog-grid" id="approved-posts-list">
+                    <!-- Bài viết từ Sanity sẽ tự động hiển thị tại đây -->
+                </div>
+                <div class="pagination-container" id="pagination-controls"></div>
+            </div>
+
+            <div class="sidebar">
+                <div class="widget">
+                    <h4>Tìm Bài Viết 🔍</h4>
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Nhập từ khóa cần tìm..." onkeyup="searchPosts()">
+                    </div>
+                </div>
+
+                <div class="widget" style="background-color: #FFF9E6;">
+                    <h4>Lịch Sinh Hoạt 🗓️</h4>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:600;"><span>☀️ Chủ Nhật (15:00)</span><span style="color:#D32F2F;">Thờ Phượng</span></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:600;"><span>🍵 Thứ Ba (19:30)</span><span style="color:#388E3C;">Học Kinh Thánh</span></div>
+                </div>
+
+                <div class="widget">
+                    <h4>Tiếp Sức 💪</h4>
+                    <p style="font-style: italic; border-left: 4px solid var(--primary-pink); padding-left: 10px; font-size: 0.95rem;">
+                        "Hãy trao mọi điều lo lắng mình cho Ngài, vì Ngài luôn chăm sóc anh em." <br><strong style="color: #5D4037;">- I Phi-e-rơ 5:7</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="confess">
+        <h2 class="section-title">Hộp Thư Gửi Tâm Tình ✉️</h2>
+        <div class="contact-box" style="max-width: 750px; margin: 0 auto;">
+            <p style="text-align: center; margin-bottom: 25px; font-weight: 600;">
+                Bạn có câu chuyện hoặc bài viết đóng góp? Đừng ngần ngại chia sẻ với tụi mình nhen!
+            </p>
+            
+            <form id="contact-form" onsubmit="handlePostSubmit(event)">
+                <div class="form-group">
+                    <label>Tên/Biệt danh của bạn:</label>
+                    <input type="text" id="author-name" required placeholder="Bạn Cừu Non giấu tên..." />
+                </div>
+                <div class="form-group">
+                    <label>Email nhận phản hồi (tùy chọn):</label>
+                    <input type="email" name="email" placeholder="email@example.com" />
+                </div>
+                <div class="form-group">
+                    <label>Tiêu đề bài viết:</label>
+                    <input type="text" id="post-title" required placeholder="Tiêu đề bài viết..." />
+                </div>
+                <div class="form-group">
+                    <label>Nội dung lời nhắn / Bài viết:</label>
+                    <div id="editor-container"></div>
+                </div>
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="submit" class="btn-comic">Gửi Bài Viết 🎈</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <div class="modal-overlay" id="post-modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <div class="music-player">
+        <button class="music-btn" onclick="toggleMusic()" id="music-control-btn">
+            <i class="fa-solid fa-music"></i>
+        </button>
+        <span style="font-weight: 700; font-size: 0.9rem;" id="music-status">Góc giai điệu</span>
+        <audio id="bg-audio" loop src="./renilsonb-breath-of-the-quiet-one-1-503488.mp3"></audio>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h4>Ghé Bên Ngài Blog 🌱</h4>
+                <p>Nơi gạt bỏ những ưu phiền để tìm lại sự bình an trong tình yêu thương của Chúa Giê-xu. Hãy đến và nghỉ ngơi bạn nhé!</p>
+            </div>
+            <div class="footer-col">
+                <h4>Liên Kết Nhanh</h4>
+                <ul>
+                    <li><a href="#home">Trang Chủ</a></li>
+                    <li><a href="#tam-tinh">Tâm Tình</a></li>
+                    <li><a href="#audio-podcast">Audio/Podcast</a></li>
+                    <li><a href="#blog">Nhật Ký</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Chủ Đề</h4>
+                <ul>
+                    <li><a href="#blog">Sự Bình An</a></li>
+                    <li><a href="#blog">Hy Vọng</a></li>
+                    <li><a href="#blog">Tình Yêu</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 TTXM - Ghé Bên Ngài Blog. Lan tỏa tình yêu thương & bình an!</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+    <script>
+        // --- CONFIG SANITY API ---
+        const SANITY_PROJECT_ID = 'gd6oa01a';
+        const SANITY_DATASET = 'production';
+        
+        const SANITY_QUERY = encodeURIComponent(`*[_type == "post"] | order(publishedAt desc){
+            _id,
+            title,
+            tag,
+            "date": publishedAt,
+            "imageUrl": mainImage.asset->url,
+            summary,
+            content
+        }`);
+        const SANITY_API_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${SANITY_QUERY}`;
+
+        let mockPosts = [];
+        let currentFilteredPosts = [];
+        let currentPage = 1;
+        const postsPerPage = 4;
+
+        // --- TO FETCH POSTS FROM SANITY CMS ---
+        async function fetchPostsFromSanity() {
+            try {
+                const response = await fetch(SANITY_API_URL);
+                const data = await response.json();
+                
+                if (data.result && data.result.length > 0) {
+                    mockPosts = data.result.map(post => ({
+                        title: post.title || "Bài viết không tiêu đề",
+                        tag: post.tag || "Sự Bình An",
+                        date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
+                        imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                        summary: post.summary || "Bấm vào để đọc chi tiết...",
+                        content: typeof post.content === 'string' ? post.content : (post.summary || '')
+                    }));
+                    currentFilteredPosts = [...mockPosts];
+                    renderPosts();
+                } else {
+                    renderPosts();
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu từ Sanity:", error);
+            }
+        }
+
+        const bibleVerses = [
+            { verse: "Đức Giê-hô-va là Đấng chăn giữ tôi; tôi sẽ chẳng thiếu thốn gì.", ref: "Thi Thiên 23:1" },
+            { verse: "Hãy trao mọi điều lo lắng mình cho Ngài, vì Ngài luôn chăm sóc anh em.", ref: "I Phi-e-rơ 5:7" },
+            { verse: "Tôi làm được mọi sự nhờ Đấng ban năng lực cho tôi.", ref: "Phi-líp 4:13" },
+            { verse: "Ta để sự bình an lại cho các con. Ta ban sự bình an của Ta cho các con.", ref: "Giăng 14:27" },
+            { verse: "Vì chính Ta biết các kế hoạch Ta dành cho các ngươi, là kế hoạch bình an chứ không phải giáng họa.", ref: "Giê-rê-mi 29:11" }
+        ];
+
+        function openCartoonGift() {
+            const revealBox = document.getElementById('verse-reveal-box');
+            const svgImg = document.querySelector('.gift-cartoon-svg');
+            
+            const random = bibleVerses[Math.floor(Math.random() * bibleVerses.length)];
+            document.getElementById('verse-text-content').innerHTML = `
+                <div>"${random.verse}" <br><span class="verse-reference">- ${random.ref}</span></div>
+            `;
+
+            svgImg.style.transform = 'scale(0.92) rotate(4deg)';
+            setTimeout(() => {
+                svgImg.style.transform = 'scale(1.04)';
+                revealBox.classList.add('active');
+            }, 150);
+        }
+
+        // --- PROCESS AUDIO PODCAST ---
+        const postAudio = document.getElementById('post-audio-element');
+        const postAudioBtn = document.getElementById('post-audio-btn');
+        const postAudioIcon = document.getElementById('post-audio-icon');
+        const postAudioProgress = document.getElementById('post-audio-progress');
+        const postAudioTime = document.getElementById('post-audio-time');
+        let isPostAudioPlaying = false;
+
+        function togglePostAudio() {
+            if (isPostAudioPlaying) {
+                postAudio.pause();
+                postAudioIcon.className = 'fa-solid fa-play';
+            } else {
+                postAudio.play();
+                postAudioIcon.className = 'fa-solid fa-pause';
+            }
+            isPostAudioPlaying = !isPostAudioPlaying;
+        }
+
+        if (postAudio) {
+            postAudio.addEventListener('timeupdate', () => {
+                if(postAudio.duration) {
+                    const percent = (postAudio.currentTime / postAudio.duration) * 100;
+                    postAudioProgress.style.width = percent + '%';
+                    
+                    let mins = Math.floor(postAudio.currentTime / 60);
+                    let secs = Math.floor(postAudio.currentTime % 60);
+                    if (secs < 10) secs = '0' + secs;
+                    postAudioTime.innerText = `${mins}:${secs}`;
+                }
+            });
+        }
+
+        function seekPostAudio(e) {
+            const container = document.getElementById('post-audio-progress-container');
+            const rect = container.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            if(postAudio.duration) {
+                postAudio.currentTime = (clickX / width) * postAudio.duration;
+            }
+        }
+
+        // --- QUIIL EDITOR ---
+        var quill = new Quill('#editor-container', {
+            theme: 'snow',
+            placeholder: 'Viết lời nhắn của bạn tại đây...',
+            modules: { toolbar: [['bold', 'italic', 'underline'], [{ 'color': [] }], ['image', 'link']] }
+        });
+
+        // --- PAGINATION AND POST RENDERING ---
+        function renderPosts() {
+            const gridContainer = document.getElementById('approved-posts-list');
+            const paginationContainer = document.getElementById('pagination-controls');
+
+            if(currentFilteredPosts.length === 0) {
+                gridContainer.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding: 20px;">Đang tải bài viết hoặc chưa có bài viết nào...</p>`;
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            const startIndex = (currentPage - 1) * postsPerPage;
+            const endIndex = startIndex + postsPerPage;
+            const paginatedPosts = currentFilteredPosts.slice(startIndex, endIndex);
+
+            gridContainer.innerHTML = paginatedPosts.map((post) => {
+                const globalIndex = mockPosts.indexOf(post);
+                return `
+                    <article class="blog-post">
+                        <div class="blog-img" style="background-image: url('${post.imageUrl}');">
+                            <span class="blog-tag">${post.tag}</span>
+                        </div>
+                        <div class="blog-content">
+                            <div style="font-size:0.8rem; color:#888; margin-bottom:5px;"><i class="fa-regular fa-calendar"></i> ${post.date}</div>
+                            <h3>${post.title}</h3>
+                            <p>${post.summary}</p>
+                            <div style="margin-top:auto;">
+                                <button onclick="openModal(${globalIndex})" class="btn-comic" style="padding: 6px 16px; font-size: 0.85rem; border-width:2px;">
+                                    Đọc tiếp <i class="fa-solid fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            const totalPages = Math.ceil(currentFilteredPosts.length / postsPerPage);
+            if (totalPages > 1) {
+                let pageBtns = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    pageBtns += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                }
+                paginationContainer.innerHTML = pageBtns;
+            } else {
+                paginationContainer.innerHTML = '';
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderPosts();
+            document.querySelector('.blog-main-area').scrollTop = 0;
+        }
+
+        function filterPosts(category, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (category === 'all') {
+                currentFilteredPosts = [...mockPosts];
+            } else {
+                currentFilteredPosts = mockPosts.filter(p => p.tag === category);
+            }
+            currentPage = 1;
+            renderPosts();
+        }
+
+        function searchPosts() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            
+            if (query === "") {
+                currentFilteredPosts = [...mockPosts];
+            } else {
+                currentFilteredPosts = mockPosts.filter(p => 
+                    p.title.toLowerCase().includes(query) || 
+                    p.summary.toLowerCase().includes(query) ||
+                    p.tag.toLowerCase().includes(query)
+                );
+            }
+            currentPage = 1;
+            renderPosts();
+        }
+
+        function handlePostSubmit(e) {
+            e.preventDefault();
+            alert("Cảm ơn bạn đã đóng góp tâm tình! Bài viết đã được gửi tới ban quản trị.");
+            document.getElementById('contact-form').reset();
+            quill.setContents([]);
+        }
+
+        function openModal(index) {
+            const post = mockPosts[index];
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <span class="blog-tag" style="position:static; display:inline-block; margin-bottom:12px;">${post.tag}</span>
+                <h2 style="font-size:1.8rem; margin-bottom:10px; color:#D32F2F;">${post.title}</h2>
+                <div style="font-size:0.85rem; color:#666; margin-bottom:18px;"><i class="fa-regular fa-calendar"></i> Đăng ngày: ${post.date}</div>
+                <img src="${post.imageUrl}" style="width:100%; max-height:350px; object-fit:cover; border-radius:16px; border:2px solid #3A2E2B; margin-bottom:20px;">
+                <div class="article-body">${post.content}</div>
+            `;
+            document.getElementById('post-modal').style.display = 'flex';
+        }
+
+        function closeModal() { 
+            document.getElementById('post-modal').style.display = 'none'; 
+        }
+
+        // --- BACKGROUND MUSIC ---
+        const bgAudio = document.getElementById('bg-audio');
+        const musicBtn = document.getElementById('music-control-btn');
+        let isMusicPlaying = false;
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                bgAudio.pause();
+                musicBtn.innerHTML = '<i class="fa-solid fa-music"></i>';
+            } else {
+                bgAudio.play();
+                musicBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        }
+
+        // Run the function to fetch data from Sanity.
+        fetchPostsFromSanity();
+    </script>
+</body>
+</html>
