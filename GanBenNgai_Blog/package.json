@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@portabletext/react": "^8.0.1"
+  }
+}
