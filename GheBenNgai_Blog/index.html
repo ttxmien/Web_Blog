@@ -396,7 +396,7 @@
         const SANITY_QUERY = encodeURIComponent(`*[_type == "post"] | order(publishedAt desc){
             _id,
             title,
-            tag,
+            "tag": coalesce(tag, Categories, categories),
             "date": publishedAt,
             "imageUrl": mainImage.asset->url,
             summary,
