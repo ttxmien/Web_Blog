@@ -7,6 +7,7 @@ export default defineCliConfig({
   },
   deployment: {
     autoUpdates: true,
-    appId: 'rr44tuvcvd7nfqqkm8fej90',
+    appId: 'xrlr7n4of2c32yirg4dsmv1w',
   },
+  studioHost: 'ganbenngai'
 })
