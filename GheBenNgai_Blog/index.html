@@ -400,7 +400,8 @@
             "date": publishedAt,
             "imageUrl": mainImage.asset->url,
             summary,
-            content
+            content,
+            body
         }`);
         const SANITY_API_URL = `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${SANITY_QUERY}`;
 
@@ -422,7 +423,8 @@
                         date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
                         imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
                         summary: post.summary || "Bấm vào để đọc chi tiết...",
-                        content: typeof post.content === 'string' ? post.content : (post.summary || '')
+                        content: typeof post.content === 'string' ? post.content : (post.summary || ''),
+                        body: post.body || post.content || []
                     }));
                     currentFilteredPosts = [...mockPosts];
                     renderPosts();
@@ -598,15 +600,39 @@
             quill.setContents([]);
         }
 
+        function parsePortableText(body) {
+            if (!body) return 'Nội dung đang được cập nhật...';
+            if (typeof body === 'string') return body;
+
+            if (Array.isArray(body)) {
+                return body.map(block => {
+                    if (block._type === 'block' && block.children) {
+                        const text = block.children.map(child => child.text).join('');
+                        if (block.style === 'h1') return `<h1>${text}</h1>`;
+                        if (block.style === 'h2') return `<h2>${text}</h2>`;
+                        if (block.style === 'h3') return `<h3>${text}</h3>`;
+                        if (block.style === 'blockquote') return `<div class="biblical-quote-box">${text}</div>`;
+                        return `<p>${text}</p>`;
+                    }
+                    return '';
+                }).join('');
+            }
+            return '';
+        }        
+
         function openModal(index) {
             const post = mockPosts[index];
             const modalBody = document.getElementById('modal-body');
+            
+            // Change body format from PortableText to HTML
+            const formattedContent = parsePortableText(post.body);
+
             modalBody.innerHTML = `
                 <span class="blog-tag" style="position:static; display:inline-block; margin-bottom:12px;">${post.tag}</span>
                 <h2 style="font-size:1.8rem; margin-bottom:10px; color:#D32F2F;">${post.title}</h2>
                 <div style="font-size:0.85rem; color:#666; margin-bottom:18px;"><i class="fa-regular fa-calendar"></i> Đăng ngày: ${post.date}</div>
                 <img src="${post.imageUrl}" style="width:100%; max-height:350px; object-fit:cover; border-radius:16px; border:2px solid #3A2E2B; margin-bottom:20px;">
-                <div class="article-body">${post.content}</div>
+                <div class="article-body">${formattedContent}</div>
             `;
             document.getElementById('post-modal').style.display = 'flex';
         }
