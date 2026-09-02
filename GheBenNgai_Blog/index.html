@@ -412,6 +412,37 @@
         let currentPage = 1;
         const postsPerPage = 4;
 
+        // Extract short text from Body/PortableText
+        function extractSummary(post) {
+            if (post.summary && typeof post.summary === 'string' && post.summary.trim() !== '') {
+                return post.summary;
+            }
+
+            if (Array.isArray(post.body) && post.body.length > 0) {
+                let extractedText = "";
+                for (const block of post.body) {
+                    if (block._type === 'block' && block.children) {
+                        const blockText = block.children.map(child => child.text).join(' ');
+                        if (blockText.trim() !== '') {
+                            extractedText += blockText + " ";
+                        }
+                    }
+
+                    if (extractedText.length >= 110) break;
+                }
+
+                if (extractedText.trim() !== '') {
+                    return extractedText.trim().slice(0, 110) + "...";
+                }
+            }
+
+            if (typeof post.content === 'string' && post.content.trim() !== '') {
+                return post.content.trim().slice(0, 110) + "...";
+            }
+
+            return "Bấm vào để đọc chi tiết...";
+        }
+
         // --- TO FETCH POSTS FROM SANITY CMS ---
         async function fetchPostsFromSanity() {
             try {
@@ -435,7 +466,7 @@
                             tag: displayTag,
                             date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
                             imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-                            summary: post.summary || "Bấm vào để đọc chi tiết...",
+                            summary: extractSummary(post),
                             body: post.body || post.content || []
                         };
                     });
