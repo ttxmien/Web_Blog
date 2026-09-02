@@ -396,15 +396,9 @@
         const SANITY_QUERY = encodeURIComponent(`*[_type == "post"] | order(publishedAt desc){
             _id,
             title,
-            "tag": coalesce(
-                tag->title, 
-                tag->name, 
-                Categories->title, 
-                Categories->name, 
-                tag, 
-                Categories, 
-                "Sự Bình An"
-            ),
+            "categories": categories[]->title,
+            "categoryNames": categories[]->name,
+            "singleTag": tag,
             "date": publishedAt,
             "imageUrl": mainImage.asset->url,
             summary,
@@ -427,20 +421,23 @@
                 if (data.result && data.result.length > 0) {
                     mockPosts = data.result.map(post => {
                         let displayTag = "Sự Bình An";
-                            if (typeof post.tag === 'string') {
-                                displayTag = post.tag;
-                            } else if (typeof post.tag === 'object' && post.tag !== null) {
-                                displayTag = post.tag.title || post.tag.name || post.tag.label || "Sự Bình An";
-                            }
 
-                            return {
-                                title: post.title || "Bài viết không tiêu đề",
-                                tag: displayTag,
-                                date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
-                                imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-                                summary: post.summary || "Bấm vào để đọc chi tiết...",
-                                body: post.body || post.content || []
-                            };
+                        if (Array.isArray(post.categories) && post.categories.length > 0 && post.categories[0]) {
+                            displayTag = post.categories[0];
+                        } else if (Array.isArray(post.categoryNames) && post.categoryNames.length > 0 && post.categoryNames[0]) {
+                            displayTag = post.categoryNames[0];
+                        } else if (typeof post.singleTag === 'string' && post.singleTag.trim() !== '') {
+                            displayTag = post.singleTag;
+                        }
+
+                        return {
+                            title: post.title || "Bài viết không tiêu đề",
+                            tag: displayTag,
+                            date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
+                            imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                            summary: post.summary || "Bấm vào để đọc chi tiết...",
+                            body: post.body || post.content || []
+                        };
                     });
                     currentFilteredPosts = [...mockPosts];
                     renderPosts();
