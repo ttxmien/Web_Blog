@@ -49,6 +49,13 @@ export default defineType({
       title: 'Body',
       type: 'blockContent',
     }),
+    defineField({
+    name: 'isFeatured',
+    title: 'Bài viết đặc biệt',
+    type: 'boolean',
+    description: 'Bật nút này để bài viết hiển thị ở mục "Tâm Tình Từ Tụi Mình 🌱"',
+    initialValue: false,
+    }),
   ],
 
   preview: {

@@ -209,33 +209,8 @@
 
     <section id="tam-tinh">
         <h2 class="section-title">Tâm Tình Từ Tụi Mình 🌱</h2>
-        <div class="featured-article-container">
-            <div class="featured-badge-admin">
-                <i class="fa-solid fa-crown" style="color: #FFB300;"></i> Bài viết đặc biệt
-            </div>
-            <h2 class="article-title-featured">Người Thợ Gốm Vẫn Luôn Kiên Nhẫn Với Bạn 🏺✨</h2>
-            <div class="article-meta-info">
-                <span><i class="fa-solid fa-user-pen"></i> Tác giả: <strong>Admin</strong></span>
-                <span><i class="fa-solid fa-calendar-days"></i> 31/08/2026</span>
-            </div>
-            <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=1000&q=80" alt="Người thợ gốm kiên nhẫn" class="article-cover-featured">
-            <div class="article-body">
-                <p class="lead-text" style="font-size: 1.15rem; font-weight: 600; color: #4A3728;">
-                    Đôi khi chúng ta lỡ tay làm tổn thương chính mình và người khác, cảm thấy bản thân như một chiếc bình gốm nứt nẻ, bị ném vào góc tối và chỉ đáng bỏ đi. Nhưng bạn biết không? Chúa là Thợ Gốm, Ngài nhặt những mảnh vỡ đó, kiên nhẫn gắn lại và biến bạn thành một tác phẩm nghệ thuật tuyệt đẹp theo cách nhẹ nhàng nhất...
-                </p>
-                <h3>1. Những Vết Nứt Không Làm Bạn Mất Đi Giá Trị</h3>
-                <p>
-                    Trong cuộc sống, có những lúc chúng ta phạm sai lầm, bị tổn thương hoặc tự dằn dặt vì những thất bại của bản thân. Thế giới ngoài kia có thể đánh giá bạn qua những vết sẹo, nhưng người Thợ Gốm Thiên Đàng thì khác. Ngài nhìn thấy trọn vẹn vẻ đẹp bên trong ngay cả khi bạn đang là những mảnh vỡ.
-                </p>
-                <div class="biblical-quote-box">
-                    "Đức Giê-hô-va phán: Hỡi nhà Y-sơ-ra-ên, Ta không thể đối xử với ngươi như người thợ gốm nầy hay sao? Hỡi nhà Y-sơ-ra-ên, đất sét trong tay thợ gốm thể nào, thì các ngươi ở trong tay Ta cũng thể ấy."
-                    <span>- Giê-rê-mi 18:6</span>
-                </div>
-                <h3>2. Sự Kiên Nhẫn Nhẹ Nhàng Của Chúa</h3>
-                <p>
-                    Ngài không đập bỏ chiếc bình nứt một cách giận dữ. Bàn tay Ngài nhẹ nhàng nhào nặn lại từng chút một, dùng tình yêu thương và sự tha thứ để hàn gắn những rạn nứt. Những vết sẹo trong quá khứ của bạn không phải là dấu hiệu của sự thất bại, mà là minh chứng cho tình yêu tha thứ và quyền năng biến đổi của Ngài.
-                </p>
-            </div>
+        <div class="featured-article-container" id="featured-article-box">
+            <p style="text-align: center; padding: 20px;">Đang tải bài viết đặc biệt...</p>
         </div>
     </section>
 
@@ -282,7 +257,7 @@
         <div class="blog-container">
             <div class="blog-main-area">
                 <div class="blog-grid" id="approved-posts-list">
-                    <!-- Bài viết từ Sanity sẽ tự động hiển thị tại đây -->
+                    <!-- Articles from Sanity will automatically appear here -->
                 </div>
                 <div class="pagination-container" id="pagination-controls"></div>
             </div>
@@ -396,6 +371,7 @@
         const SANITY_QUERY = encodeURIComponent(`*[_type == "post"] | order(publishedAt desc){
             _id,
             title,
+            isFeatured,
             "categories": categories[]->title,
             "categoryNames": categories[]->name,
             "singleTag": tag,
@@ -443,13 +419,45 @@
             return "Bấm vào để đọc chi tiết...";
         }
 
-        // --- TO FETCH POSTS FROM SANITY CMS ---
+        // Render the special article (Tâm Tình Từ Tụi Mình) fetched from Sanity.
+        function renderFeaturedArticle(featuredPost) {
+            const container = document.getElementById('featured-article-box');
+            if (!featuredPost) {
+                container.innerHTML = '<p style="text-align:center; padding: 20px;">Chưa có bài viết đặc biệt nào.</p>';
+                return;
+            }
+
+            const formattedContent = parsePortableText(featuredPost.body || featuredPost.content);
+            const displayDate = featuredPost.date ? new Date(featuredPost.date).toLocaleDateString('vi-VN') : 'Mới đăng';
+
+            container.innerHTML = `
+                <div class="featured-badge-admin">
+                    <i class="fa-solid fa-crown" style="color: #FFB300;"></i> Bài viết đặc biệt
+                </div>
+                <h2 class="article-title-featured">${featuredPost.title || 'Bài viết không tiêu đề'}</h2>
+                <div class="article-meta-info">
+                    <span><i class="fa-solid fa-user-pen"></i> Tác giả: <strong>Admin</strong></span>
+                    <span><i class="fa-solid fa-calendar-days"></i> ${displayDate}</span>
+                </div>
+                ${featuredPost.imageUrl ? `<img src="${featuredPost.imageUrl}" alt="${featuredPost.title}" class="article-cover-featured">` : ''}
+                <div class="article-body">
+                    ${formattedContent}
+                </div>
+            `;
+        }
+
+        // --- FETCH POSTS FROM SANITY CMS ---
         async function fetchPostsFromSanity() {
             try {
                 const response = await fetch(SANITY_API_URL);
                 const data = await response.json();
                 
                 if (data.result && data.result.length > 0) {
+                    // Filter for articles where `isFeatured === true`; if none exist, use the latest article as the featured one.
+                    const featured = data.result.find(p => p.isFeatured === true) || data.result[0];
+                    renderFeaturedArticle(featured);
+
+                    // Map the list of articles to the Nhật Ký Bình Yên
                     mockPosts = data.result.map(post => {
                         let displayTag = "Sự Bình An";
 
@@ -474,6 +482,7 @@
                     renderPosts();
                 } else {
                     renderPosts();
+                    renderFeaturedArticle(null);
                 }
             } catch (error) {
                 console.error("Lỗi khi tải dữ liệu từ Sanity:", error);
@@ -668,7 +677,6 @@
             const post = mockPosts[index];
             const modalBody = document.getElementById('modal-body');
             
-            // Change body format from PortableText to HTML
             const formattedContent = parsePortableText(post.body);
 
             modalBody.innerHTML = `
@@ -701,7 +709,6 @@
             isMusicPlaying = !isMusicPlaying;
         }
 
-        // Run the function to fetch data from Sanity.
         fetchPostsFromSanity();
     </script>
 </body>
