@@ -396,7 +396,15 @@
         const SANITY_QUERY = encodeURIComponent(`*[_type == "post"] | order(publishedAt desc){
             _id,
             title,
-            "tag": coalesce(tag, Categories, categories),
+            "tag": coalesce(
+                tag->title, 
+                tag->name, 
+                Categories->title, 
+                Categories->name, 
+                tag, 
+                Categories, 
+                "Sự Bình An"
+            ),
             "date": publishedAt,
             "imageUrl": mainImage.asset->url,
             summary,
@@ -417,15 +425,23 @@
                 const data = await response.json();
                 
                 if (data.result && data.result.length > 0) {
-                    mockPosts = data.result.map(post => ({
-                        title: post.title || "Bài viết không tiêu đề",
-                        tag: post.tag || "Sự Bình An",
-                        date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
-                        imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
-                        summary: post.summary || "Bấm vào để đọc chi tiết...",
-                        content: typeof post.content === 'string' ? post.content : (post.summary || ''),
-                        body: post.body || post.content || []
-                    }));
+                    mockPosts = data.result.map(post => {
+                        let displayTag = "Sự Bình An";
+                            if (typeof post.tag === 'string') {
+                                displayTag = post.tag;
+                            } else if (typeof post.tag === 'object' && post.tag !== null) {
+                                displayTag = post.tag.title || post.tag.name || post.tag.label || "Sự Bình An";
+                            }
+
+                            return {
+                                title: post.title || "Bài viết không tiêu đề",
+                                tag: displayTag,
+                                date: post.date ? new Date(post.date).toLocaleDateString('vi-VN') : "Mới đăng",
+                                imageUrl: post.imageUrl || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
+                                summary: post.summary || "Bấm vào để đọc chi tiết...",
+                                body: post.body || post.content || []
+                            };
+                    });
                     currentFilteredPosts = [...mockPosts];
                     renderPosts();
                 } else {
