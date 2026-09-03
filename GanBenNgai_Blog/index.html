@@ -672,44 +672,36 @@
             // 3. Chuẩn bị cấu trúc dữ liệu theo định dạng Sanity Document
             // Ở đây chúng ta tạo một document kiểu "post"
             const docData = {
-                mutations: [
-                    {
-                        create: {
-                            _type: "post",
-                            title: `${postTitle} (Từ: ${authorName})`,
-                            publishedAt: new Date().toISOString(),
-                            // Nếu schema của bạn có trường lưu email hoặc nội dung thô, bạn có thể map vào đây:
-                            // authorEmail: authorEmail, 
-                            body: [
-                                {
-                                    _type: "block",
-                                    _key: "block1",
-                                    style: "normal",
-                                    children: [
-                                        {
-                                            _type: "span",
-                                            _key: "span1",
-                                            text: `Tâm tình gửi từ: ${authorName} (${authorEmail || "Không có email"})`
-                                        }
-                                    ]
-                                },
-                                {
-                                    _type: "block",
-                                    _key: "block2",
-                                    style: "normal",
-                                    children: [
-                                        {
-                                            _type: "span",
-                                            _key: "span2",
-                                            text: quill.getText() // Lấy văn bản thô từ Quill
-                                        }
-                                    ]
-                                }
-                            ]
+                    mutations: [
+                        {
+                            create: {
+                                _type: "guiTamTinh", // <-- Đổi từ "post" thành tên schema của mục Gửi Tâm Tình (ví dụ: guiTamTinh, confess,...)
+                                title: postTitle,    // Tiêu đề bài viết do người dùng nhập
+                                // publishedAt: new Date().toISOString(), // (Tùy chọn nếu schema của bạn có trường ngày tháng)
+                                
+                                // Map các trường dữ liệu cho khớp với các trường bạn đã định nghĩa trong Schema Gửi Tâm Tình của Sanity:
+                                authorName: authorName,   // Tên tác giả / biệt danh
+                                authorEmail: authorEmail, // Email người gửi (nếu schema có trường này)
+                                
+                                // Nội dung bài viết (hoặc lưu dạng text/block tùy theo schema của bạn thiết kế)
+                                body: [
+                                    {
+                                        _type: "block",
+                                        _key: "block1",
+                                        style: "normal",
+                                        children: [
+                                            {
+                                                _type: "span",
+                                                _key: "span1",
+                                                text: quill.getText() // Lấy nội dung chữ từ khung soạn thảo
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
                         }
-                    }
-                ]
-            };
+                    ]
+                };
 
             try {
                 // 4. Gửi yêu cầu fetch POST lên Sanity API
