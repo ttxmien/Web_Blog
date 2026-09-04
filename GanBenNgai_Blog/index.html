@@ -652,7 +652,8 @@
             const authorName = document.getElementById('author-name').value.trim();
             const authorEmail = document.querySelector('input[name="email"]').value.trim();
             const postTitle = document.getElementById('post-title').value.trim();
-            const postContentHtml = quill.root.innerHTML;
+            
+            const quillHtml = quill.root.innerHTML;
 
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerText;
@@ -663,36 +664,98 @@
             const dataset = "production";
             const token = "skiIfhIhedDXn6x589zTiLaQD6nkKGWsJQALf3ThdS1bbTTDJdjJa6dqyazKPCXN6ksKtM8enP4fget9jwBQLsR53S09WgOjlHiRNstqupMmrHp3P5ySA7elowL2tLMw6Zfuta3c7RC6nO5OHhAPv85KeSt4k2mdgfyOim6Hj8x3ZX31hxG9";
 
-            // URL API Mutate of the Sanity
             const sanityApiUrl = `https://${projectId}.api.sanity.io/v2021-10-21/data/mutate/${dataset}`;
 
-            const docData = {
-                    mutations: [
-                        {
-                            create: {
-                                _type: "confess",
-                                title: postTitle,
-                                publishedAt: new Date().toISOString(),
-                                authorName: authorName,
-                                authorEmail: authorEmail,
-                                body: [
-                                    {
-                                        _type: "block",
-                                        _key: "block1",
-                                        style: "normal",
-                                        children: [
-                                            {
-                                                _type: "span",
-                                                _key: "span1",
-                                                text: quill.getText()
-                                            }
-                                        ]
-                                    }
-                                ]
+            const parser = new DOMParser();
+            const docHtml = parser.parseFromString(quillHtml, 'text/html');
+            const childNodes = docHtml.body.childNodes;
+            const contentBlocks = [];
+            let keyCounter = 1;
+
+            childNodes.forEach(node => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.tagName === 'P' || node.tagName === 'DIV') {
+                        const imgTag = node.querySelector('img');
+                        if (imgTag) {
+                            const textContent = node.textContent.trim();
+                            if (textContent) {
+                                contentBlocks.push({
+                                    _type: "block",
+                                    _key: "block_" + (keyCounter++),
+                                    style: "normal",
+                                    children: [{ _type: "span", _key: "span_" + (keyCounter++), text: textContent }]
+                                });
+                            }
+                            contentBlocks.push({
+                                _type: "block",
+                                _key: "block_" + (keyCounter++),
+                                style: "normal",
+                                children: [{ _type: "span", _key: "span_" + (keyCounter++), text: "[Hình ảnh đính kèm: " + imgTag.src + "]" }]
+                            });
+                        } else {
+                            const textContent = node.textContent.trim();
+                            if (textContent !== "") {
+                                contentBlocks.push({
+                                    _type: "block",
+                                    _key: "block_" + (keyCounter++),
+                                    style: "normal",
+                                    children: [
+                                        {
+                                            _type: "span",
+                                            _key: "span_" + (keyCounter++),
+                                            text: textContent
+                                        }
+                                    ]
+                                });
                             }
                         }
-                    ]
-                };
+                    } else if (node.tagName === 'IMG') {
+                        contentBlocks.push({
+                            _type: "block",
+                            _key: "block_" + (keyCounter++),
+                            style: "normal",
+                            children: [{ _type: "span", _key: "span_" + (keyCounter++), text: "[Hình ảnh đính kèm: " + node.src + "]" }]
+                        });
+                    }
+                } else if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() !== "") {
+                    contentBlocks.push({
+                        _type: "block",
+                        _key: "block_" + (keyCounter++),
+                        style: "normal",
+                        children: [
+                            {
+                                _type: "span",
+                                _key: "span_" + (keyCounter++),
+                                text: node.textContent.trim()
+                            }
+                        ]
+                    });
+                }
+            });
+
+            if (contentBlocks.length === 0) {
+                contentBlocks.push({
+                    _type: "block",
+                    _key: "block_default",
+                    style: "normal",
+                    children: [{ _type: "span", _key: "span_default", text: quill.getText() }]
+                });
+            }
+
+            const docData = {
+                mutations: [
+                    {
+                        create: {
+                            _type: "confess",
+                            title: postTitle,
+                            publishedAt: new Date().toISOString(),
+                            authorName: authorName,
+                            authorEmail: authorEmail,
+                            body: contentBlocks
+                        }
+                    }
+                ]
+            };
 
             try {
                 const response = await fetch(sanityApiUrl, {
@@ -707,7 +770,7 @@
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert("Cảm ơn bạn đã đóng góp! Bài viết đã được gửi thành công lên hệ thống quản trị.");
+                    alert("Cảm ơn bạn đã đóng góp! Bài viết đã được gửi thành công lên hệ thống.");
                     document.getElementById('contact-form').reset();
                     quill.setContents([]);
                 } else {
@@ -718,7 +781,6 @@
                 console.error("Lỗi kết nối:", error);
                 alert("Không thể kết nối tới máy chủ. Vui lòng kiểm tra lại mạng!");
             } finally {
-                // Restore button state
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
             }
@@ -732,17 +794,26 @@
                 return body.map(block => {
                     if (block._type === 'block' && block.children) {
                         const text = block.children.map(child => child.text).join('');
+                        
+                        if (text.startsWith('[Hình ảnh đính kèm: ') && text.endsWith(']')) {
+                            const imgSrc = text.replace('[Hình ảnh đính kèm: ', '').slice(0, -1);
+                            return `<div style="text-align: center; margin: 15px 0;"><img src="${imgSrc}" style="max-width: 100%; border-radius: 12px; border: 2px solid #3A2E2B;" alt="Ảnh đính kèm"></div>`;
+                        }
+
                         if (block.style === 'h1') return `<h1>${text}</h1>`;
                         if (block.style === 'h2') return `<h2>${text}</h2>`;
                         if (block.style === 'h3') return `<h3>${text}</h3>`;
                         if (block.style === 'blockquote') return `<div class="biblical-quote-box">${text}</div>`;
                         return `<p>${text}</p>`;
                     }
+                    if (block._type === 'image' && block.asset && block.asset._ref) {
+                        return `<div style="text-align: center; margin: 15px 0;"><img src="${block.asset.url || ''}" style="max-width: 100%; border-radius: 12px;" alt="Image"></div>`;
+                    }
                     return '';
                 }).join('');
             }
             return '';
-        }        
+        }      
 
         function openModal(index) {
             const post = mockPosts[index];
