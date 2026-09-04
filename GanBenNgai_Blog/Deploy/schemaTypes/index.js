@@ -5,4 +5,3 @@ import author from './author'
 import confess from './confess'
 
 export const schemaTypes = [post, author, category, confess, blockContent]
-// export const schemaTypes = [post, author, category, blockContent]

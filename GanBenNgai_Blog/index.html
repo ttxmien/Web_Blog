@@ -649,41 +649,32 @@
         async function handlePostSubmit(e) {
             e.preventDefault();
             
-            // 1. Lấy dữ liệu từ form người dùng nhập
             const authorName = document.getElementById('author-name').value.trim();
             const authorEmail = document.querySelector('input[name="email"]').value.trim();
             const postTitle = document.getElementById('post-title').value.trim();
-            const postContentHtml = quill.root.innerHTML; // Lấy nội dung HTML từ Quill editor
+            const postContentHtml = quill.root.innerHTML;
 
-            // Hiển thị trạng thái đang xử lý trên nút bấm
             const submitBtn = e.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerText;
             submitBtn.innerText = "Đang gửi tâm tình lên hệ thống...";
             submitBtn.disabled = true;
 
-            // 2. Cấu hình thông tin kết nối Sanity
-            const projectId = "gd6oa01a"; // Project ID của bạn
-            const dataset = "production";   // Dataset của bạn
+            const projectId = "gd6oa01a";
+            const dataset = "production";
             const token = "skiIfhIhedDXn6x589zTiLaQD6nkKGWsJQALf3ThdS1bbTTDJdjJa6dqyazKPCXN6ksKtM8enP4fget9jwBQLsR53S09WgOjlHiRNstqupMmrHp3P5ySA7elowL2tLMw6Zfuta3c7RC6nO5OHhAPv85KeSt4k2mdgfyOim6Hj8x3ZX31hxG9";
 
-            // URL API Mutate của Sanity
+            // URL API Mutate of the Sanity
             const sanityApiUrl = `https://${projectId}.api.sanity.io/v2021-10-21/data/mutate/${dataset}`;
 
-            // 3. Chuẩn bị cấu trúc dữ liệu theo định dạng Sanity Document
-            // Ở đây chúng ta tạo một document kiểu "post"
             const docData = {
                     mutations: [
                         {
                             create: {
-                                _type: "post", // <-- Đổi từ "post" thành tên schema của mục Gửi Tâm Tình (ví dụ: guiTamTinh, confess,...)
-                                title: postTitle,    // Tiêu đề bài viết do người dùng nhập
-                                publishedAt: new Date().toISOString(), // (Tùy chọn nếu schema của bạn có trường ngày tháng)
-                                
-                                // Map các trường dữ liệu cho khớp với các trường bạn đã định nghĩa trong Schema Gửi Tâm Tình của Sanity:
-                                authorName: authorName,   // Tên tác giả / biệt danh
-                                authorEmail: authorEmail, // Email người gửi (nếu schema có trường này)
-                                
-                                // Nội dung bài viết (hoặc lưu dạng text/block tùy theo schema của bạn thiết kế)
+                                _type: "confess",
+                                title: postTitle,
+                                publishedAt: new Date().toISOString(),
+                                authorName: authorName,
+                                authorEmail: authorEmail,
                                 body: [
                                     {
                                         _type: "block",
@@ -693,7 +684,7 @@
                                             {
                                                 _type: "span",
                                                 _key: "span1",
-                                                text: quill.getText() // Lấy nội dung chữ từ khung soạn thảo
+                                                text: quill.getText()
                                             }
                                         ]
                                     }
@@ -704,7 +695,6 @@
                 };
 
             try {
-                // 4. Gửi yêu cầu fetch POST lên Sanity API
                 const response = await fetch(sanityApiUrl, {
                     method: 'POST',
                     headers: {
@@ -728,7 +718,7 @@
                 console.error("Lỗi kết nối:", error);
                 alert("Không thể kết nối tới máy chủ. Vui lòng kiểm tra lại mạng!");
             } finally {
-                // Khôi phục lại trạng thái nút bấm
+                // Restore button state
                 submitBtn.innerText = originalText;
                 submitBtn.disabled = false;
             }

@@ -23,7 +23,7 @@ export default defineType({
     defineField({
       name: 'publishedAt',
       title: 'Published at',
-      type: 'datetime', // <-- Thêm trường thời gian ở đây
+      type: 'datetime',
     }),
     defineField({
       name: 'body',
