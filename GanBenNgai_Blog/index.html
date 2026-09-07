@@ -660,11 +660,7 @@
             submitBtn.innerText = "Đang gửi tâm tình lên hệ thống...";
             submitBtn.disabled = true;
 
-            const projectId = "gd6oa01a";
-            const dataset = "production";
-            const token = "skiIfhIhedDXn6x589zTiLaQD6nkKGWsJQALf3ThdS1bbTTDJdjJa6dqyazKPCXN6ksKtM8enP4fget9jwBQLsR53S09WgOjlHiRNstqupMmrHp3P5ySA7elowL2tLMw6Zfuta3c7RC6nO5OHhAPv85KeSt4k2mdgfyOim6Hj8x3ZX31hxG9";
 
-            const sanityApiUrl = `https://${projectId}.api.sanity.io/v2021-10-21/data/mutate/${dataset}`;
 
             const parser = new DOMParser();
             const docHtml = parser.parseFromString(quillHtml, 'text/html');
@@ -742,29 +738,21 @@
                 });
             }
 
-            const docData = {
-                mutations: [
-                    {
-                        create: {
-                            _type: "confess",
-                            title: postTitle,
-                            publishedAt: new Date().toISOString(),
-                            authorName: authorName,
-                            authorEmail: authorEmail,
-                            body: contentBlocks
-                        }
-                    }
-                ]
+            // Package data to send to the Vercel Serverless Function (/api/submit)
+            const payloadData = {
+                postTitle,
+                authorName,
+                authorEmail,
+                contentBlocks
             };
 
             try {
-                const response = await fetch(sanityApiUrl, {
+                const response = await fetch('/api/submit', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(docData)
+                    body: JSON.stringify(payloadData)
                 });
 
                 const result = await response.json();
