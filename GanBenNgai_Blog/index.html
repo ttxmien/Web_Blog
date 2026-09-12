@@ -377,6 +377,7 @@
             "singleTag": tag,
             "date": publishedAt,
             "imageUrl": mainImage.asset->url,
+            "authorName": author->name,
             summary,
             content,
             body
@@ -430,6 +431,8 @@
             const formattedContent = parsePortableText(featuredPost.body || featuredPost.content);
             const displayDate = featuredPost.date ? new Date(featuredPost.date).toLocaleDateString('vi-VN') : 'Mới đăng';
 
+            const authorName = featuredPost.authorName || 'Admin';
+            
             container.innerHTML = `
                 <div class="featured-badge-admin">
                     <i class="fa-solid fa-crown" style="color: #FFB300;"></i> Bài viết đặc biệt
