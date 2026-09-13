@@ -26,7 +26,13 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
         body { font-family: 'Quicksand', sans-serif; background-color: var(--bg-main); color: var(--text-dark); overflow-x: hidden; padding-top: 100px; }
-        h1, h2, h3, h4, .nav-logo { font-family: 'Fredoka', cursive; font-weight: 700; }
+        h1, h2, h3, h4, .nav-logo { 
+            font-family: 'Fredoka', cursive; 
+            font-weight: 700;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
 
         nav {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 1200px;
